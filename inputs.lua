@@ -487,35 +487,26 @@ Inputs.Parse_Input = function(mode)
 
     for line in (input .. "\n"):gmatch("(.-)\n") do
         local valid, name, timestamp, rel_sec = Inputs.Parse_Line(line)
-        if valid and name and timestamp then
-            print("Valid: " .. tostring(valid) .. " | Name: " .. name .. " | Timestamp: " .. tostring(timestamp[1]) .. ":" .. tostring(timestamp[2]) .. ":" .. tostring(timestamp[3]))
-        end
         if valid and name then
             -- Check if name is a known HNM
             local hnm_name, is_hnm, hnm_type = Utils.Canonicalize_HNM(name)
-            print("Name: " .. hnm_name .. " | is_hnm: " .. tostring(is_hnm) .. " | HNM Type: " .. tostring(hnm_type))
             if is_hnm then
-                print("Name: " .. hnm_name .. " | is_hnm: " .. tostring(is_hnm) .. " | HNM Type: " .. tostring(hnm_type))
                 local rel_sec = Utils.Get_Relative_Seconds(line)
                 --local spawn_ts = Inputs.Compute_Spawn_Time(line)
                 local spawn_ts = Inputs.Spawn_From_Clock_Gated(base_date, timestamp[1], timestamp[2], timestamp[3], rel_sec, now)
                 if spawn_ts then
                     local is_rel = Utils.Is_Relevant(now, spawn_ts, hnm_type)
-                    print("Is Relevant?: " .. tostring(is_rel) .. " | Now: " .. tostring(now) .. " | Spawn Ts: " .. tostring(spawn_ts))
                     if is_rel and mode == "creation" then
                         -- CreateMultiple.Schedule = function(type, name, date, time, custom_info)
                         local date, time = Utils.Timestamp_To_DateTime(spawn_ts)
-                        print("Date: " .. tostring(date) .. " | Time: " .. tostring(time))
                         CreateMultiple.Schedule(hnm_type, hnm_name, date, time, nil)
                     end
                 end
             else
                 if mode == "creation" then
-                    print("Name: " .. name .. " | is_hnm: " .. tostring(is_hnm))
                     local spawn_ts = Input.Compute_Spawn_Time(line) 
                     if spawn_ts then
                         local date, time = Utils.Timestamp_To_DateTime(spawn_ts)
-                        print("Date: " .. tostring(date) .. " | Time: " .. tostring(time))
                         CreateMultiple.Schedule(CreateMultiple.Type.Normal, name, date, time, nil)
                     end
                 end
