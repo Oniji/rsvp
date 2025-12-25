@@ -6,6 +6,7 @@ ashita.events.register('load', 'load_cb', function()
         Clock  = Settings.load(Clock.Defaults, Clock.ALIAS),
         List   = Settings.load(List.Defaults, List.ALIAS),
         Create = Settings.load(Create.Defaults, Create.ALIAS),
+        CreateMultiple = Settings.load(CreateMultiple.Defaults, CreateMultiple.ALIAS),
         Config = Settings.load(Config.Defaults, Config.ALIAS)
     }
     File.Load()
@@ -19,6 +20,7 @@ ashita.events.register('unload', 'unload_cb', function ()
     Settings.save(Clock.ALIAS)
     Settings.save(List.ALIAS)
     Settings.save(Create.ALIAS)
+    Settings.save(CreateMultiple.ALIAS)
     Settings.save(Config.ALIAS)
     File.Save()
 end)
@@ -53,6 +55,17 @@ Settings.register(Create.ALIAS, "settings_update", function(settings)
         RSVP.Create = settings
         Create.Reset_Position = true
         Settings.save(Create.ALIAS)
+    end
+end)
+
+------------------------------------------------------------------------------------------------------
+-- Check for character switches. Reloads character specific MP settings.
+------------------------------------------------------------------------------------------------------
+Settings.register(CreateMultiple.ALIAS, "settings_update", function(settings)
+    if settings ~= nil then
+        RSVP.CreateMultiple = settings
+        CreateMultiple.Reset_Position = true
+        Settings.save(CreateMultiple.ALIAS)
     end
 end)
 

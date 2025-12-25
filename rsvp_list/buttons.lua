@@ -8,10 +8,18 @@ List.Buttons.Create_New = function()
 end
 
 -- ------------------------------------------------------------------------------------------------------
+-- Displays a create multiple new button.
+-- ------------------------------------------------------------------------------------------------------
+List.Buttons.Create_Multiple_New = function()
+    if UI.SmallButton(" ++ ") then Config.Toggle.Create_Multiple_Window_Visibility() end
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Displays the mode buttons at the top of the timer list.
 -- ------------------------------------------------------------------------------------------------------
 List.Buttons.Mode_Buttons = function()
     List.Buttons.Create_New()
+    UI.SameLine() List.Buttons.Create_Multiple_New()
     UI.SameLine() List.Buttons.Toggle_Group_Mode()
     UI.SameLine() List.Buttons.Toggle_Timestamp()
     UI.SameLine() List.Buttons.Toggle_Filter()

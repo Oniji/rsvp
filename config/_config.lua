@@ -80,6 +80,11 @@ Config.Help_Text = function()
             UI.TableNextColumn() UI.Text("Toggles timer creation window visibility.")
 
             UI.TableNextRow()
+            UI.TableNextColumn() UI.Text("multi\nmultiple")
+            UI.TableNextColumn() UI.Text("cm\nmm")
+            UI.TableNextColumn() UI.Text("Toggles multiple timer creation window visibility.")
+
+            UI.TableNextRow()
             UI.TableNextColumn() UI.Text("timers\nlist")
             UI.TableNextColumn() UI.Text("t\nl")
             UI.TableNextColumn() UI.Text("Toggles timer list window visibility.")
@@ -227,6 +232,13 @@ end
 -- ------------------------------------------------------------------------------------------------------
 Config.Toggle.Create_Window_Visibility = function()
     RSVP.Create.Visible[1] = not RSVP.Create.Visible[1]
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Toggles multi-creation window visibility.
+-- ------------------------------------------------------------------------------------------------------
+Config.Toggle.Create_Multiple_Window_Visibility = function()
+    RSVP.CreateMultiple.Visible[1] = not RSVP.CreateMultiple.Visible[1]
 end
 
 -- ------------------------------------------------------------------------------------------------------

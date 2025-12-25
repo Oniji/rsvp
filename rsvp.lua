@@ -34,11 +34,13 @@ require("gui._window")
 require("config._config")
 require("clock._clock")
 require("rsvp_creation._rsvp_creation")
+require("rsvp_creation_multiple._rsvp_creation_multiple")
 require("rsvp_list._rsvp_list")
 require("timers._timers")
 require("file")
 require("inputs")
 require("initialization")
+require("utils")
 
 _Globals = T{}
 _Globals.Initialized = false
@@ -53,6 +55,7 @@ ashita.events.register('d3d_present', 'present_cb', function ()
     if not Ashita.Player.Is_Logged_In() then return nil end
     Clock.Display()
     Create.Display()
+    CreateMultiple.Display()
     List.Display()
     Config.Display()
 end)
@@ -70,6 +73,8 @@ ashita.events.register('command', 'command_cb', function (e)
             Config.Toggle.Config_Window_Visibility()
         elseif arg == "create" or arg == "make" or arg == "c" or arg == "m" then
             Config.Toggle.Create_Window_Visibility()
+        elseif arg == "multi" or arg == "multiple" or arg == "cm" or arg == "mm" then
+            Config.Toggle.Create_Multiple_Window_Visibility()
         elseif arg == "clock" or arg == "cl" then
             Config.Toggle.Clock_Visibility()
         elseif arg == "timers" or arg == "list" or arg == "t" or arg == "l" then
