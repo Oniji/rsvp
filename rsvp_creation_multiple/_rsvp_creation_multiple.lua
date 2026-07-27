@@ -8,7 +8,7 @@ CreateMultiple.Defaults = T{
 
 CreateMultiple.Table_Flags = bit.bor(ImGuiSelectableFlags_None)
 
-CreateMultiple.ALIAS = "create"
+CreateMultiple.ALIAS = "createmultiple"
 CreateMultiple.Scaling_Set = true
 CreateMultiple.Reset_Position = true
 
