@@ -15,6 +15,7 @@ This is an approved Horizon addon (06/26/24 addonreq-0604).
 3. Set a timer for a future real world time.
 4. Create timer sets for HNMs. Set the first window and all subsequent windows will have timers automatically created.
 5. HNM--or grouped--timers can be expanded to show the individual windows.
+6. Bulk-create timers from pasted multi-line text (RSVP Multi-Creation).
 7. Timers are saved to a file so they will still be there if you log out or shut down.
 8. Timers persist until you cancel them so you can see how overdue you are.
 
@@ -28,9 +29,10 @@ The timer list is designed to be visible most of the time.
 
 #### Buttons at the Top
 1. "+" : Opens and closes the RSVP Creation window.
-2. Group: By default, grouped timers are collapsed and you can only see the nearest timer. Enabling Group Mode allows you to expand grouped timers and delete individual windows or the entire group.
-3. Stamp: Toggles from countdown mode to timestamp mode. Timestamp mode lets you see the time you are counting down to. It's useful if you ever doubt that you typed the time in wrong.
-4. Filt: You can configure a time filter in RSVP Settings that allows you to hide timers that are more than {X} amount of hours in the future. If you want to temporarily peak at those timers you can turn the filter off with this button to see them. The number in parenthesis shows how many timers are currently being filtered.
+2. "++" : Opens and closes the RSVP Multi-Creation window (bulk timer paste).
+3. Group: By default, grouped timers are collapsed and you can only see the nearest timer. Enabling Group Mode allows you to expand grouped timers and delete individual windows or the entire group.
+4. Stamp: Toggles from countdown mode to timestamp mode. Timestamp mode lets you see the time you are counting down to. It's useful if you ever doubt that you typed the time in wrong.
+5. Filt: You can configure a time filter in RSVP Settings that allows you to hide timers that are more than {X} amount of hours in the future. If you want to temporarily peak at those timers you can turn the filter off with this button to see them. The number in parenthesis shows how many timers are currently being filtered.
 
 #### Grouping
 Grouped timers are collapsed by default to save space. You can expand them to delete subsequent timers individually. You can also delete the whole group easily.
@@ -47,4 +49,49 @@ _Left: Timer List in Group Mode. Right: RSVP Creation Window showing Specific ti
 Relative timers are created {X} amount of minutes into the future from the current time. If a mob dies now and it respawns in 5 minutes then you would create a Relative timer for 5 minutes to track its next spawn time. There are quick buttons available for some common times otherwise you can enter a custom amount of minutes. Relative timers do NOT require a name. If you want to quickly make a timer without thinking about a name just press the quick button or Create button and the timer will be created. Its name will be the timestamp that you are counting down to.
 #### Specific
 Specific timers are created by entering a specific date and time to count down to. There can be useful for HNMs or other events. Names are required for these and the time and dates need to be in the formats HH:MM:SS (AM/PM) and MM/DD/YY , respectively. The AM/PM is optional if you want to use 24-hour time. A timer preview is provided so that you can see what the addon thinks you're entering. The Sim: row is a simulation of what the timer will look like once created. Some quick buttons are available for creating timer groups for HNMs. The "10M7" buttons is for your 1-hour 10-minute windows like Fafnir (7 total windows). The "1H25" is for your 24-hour 1-hour windows like Tiamat (25 total windows). If you need to make a grouped timer with custom windows you can do that as well by expanding the "Custom Windows" drop down.
+
+### RSVP Multi-Creation
+The Multi-Creation window lets you paste several timer lines at once (for example from a Discord TOD bot) and create them in one click. Open it with the "++" button on the timer list, or with `/rsvp multi` (`cm` / `mm` also work).
+
+1. Set the **Date** (`MM/DD/YY`) that the pasted clock times belong to.
+2. Paste the bulk text into the multi-line field.
+3. Press **Add**.
+
+Each non-empty line is parsed independently. Lines without a valid time are ignored (headers, blank lines, etc.).
+
+#### Line syntax
+Each timer line needs a **name** and a **time**. An optional **relative phrase** helps resolve day rollover when the clock time alone is ambiguous.
+
+```
+<Name> ... <H:MM:SS or H:MM:SS AM/PM> [relative phrase]
+```
+
+- **Name:** Leading letters/spaces (and `/` for combined names like `Fafnir/Nidhogg`). Extra text such as Discord emoji codes (`:turtle:`) or counters (`(1)`) can appear after the name and are ignored for matching.
+- **Time:** `H:MM:SS` or `HH:MM:SS`. Optional `AM` / `PM` for 12-hour time. Without AM/PM, the time is treated as 24-hour.
+- **Relative phrase (optional):** Used with the date + clock time to pick the correct day.
+  - Future: `in a day`, `in N days`, `in N hours`, `in N minutes`, `in N seconds`
+  - Past: `a day ago`, `N days ago`, `N hours ago`, `N minutes ago`, `N seconds ago`
+
+#### Examples
+
+24-hour:
+
+```
+Adamantoise :turtle: (1): 18:05:16 in 3 hours
+Bloodsucker :drop_of_blood:: 23:40:40 in 8 hours
+King Vinegarroon :scorpion:: 1:37:47 in 10 hours
+```
+
+12-hour:
+
+```
+Adamantoise :turtle: (1): 6:05:16 PM in 3 hours
+Bloodsucker :drop_of_blood:: 11:40:40 PM in 8 hours
+King Vinegarroon :scorpion:: 1:37:47 AM in 10 hours
+```
+
+#### Known HNMs
+Recognized HNM names are canonicalized and scheduled with the matching window set when relevant (for example King windows for Fafnir/Nidhogg, Wyrm windows for Tiamat). Unknown names are created as normal single timers.
+
+Supported names include: Behemoth, King Behemoth, Adamantoise, Aspidochelone, Fafnir, Nidhogg, Tiamat, Vrtra, Jormungand, Simurgh, King Arthro, King Vinegarroon, Bloodsucker, and Shikigami Weapon (plus combined forms like `Fafnir/Nidhogg`).
 

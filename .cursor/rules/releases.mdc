@@ -1,0 +1,31 @@
+---
+description: How to create GitHub releases for RSVP when the user requests one
+alwaysApply: true
+---
+
+# RSVP Releases
+
+Only create a release when the user explicitly asks.
+
+## Packaging
+
+- Workflow: `.github/workflows/release.yml`
+- Trigger: push a tag matching `v*` (example: `v1.2.0`)
+- Asset: `rsvp.zip` with a top-level `rsvp/` folder (Ashita addons layout)
+- Excludes: `.github`, `.vscode`, `.cursor`, `README.md`, git metadata
+
+## On request
+
+1. Confirm working tree / branch state (`git status`, recent commits). Commit only if the user asked.
+2. Bump `addon.version` in `rsvp.lua` when appropriate (current style like `27.07.25.00`).
+3. Ensure release workflow is on the branch that will be tagged.
+4. Create and push the tag:
+   ```powershell
+   git tag vX.Y.Z
+   git push origin vX.Y.Z
+   ```
+5. Wait for the Actions release job (or create/upload with `gh` if needed).
+6. Optionally refine notes with `gh release edit` (features, install reminder to download `rsvp.zip` not Source code).
+7. Return the release URL.
+
+Do not force-push tags or use destructive git commands unless the user explicitly requests them.

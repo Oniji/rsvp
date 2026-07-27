@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pack addon
+        run: |
+          mkdir -p package/rsvp
+          # Archive root is "rsvp/" so users extract into Ashita/addons/
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.vscode/' \
+            --exclude='.cursor/' \
+            --exclude='package/' \
+            --exclude='README.md' \
+            --exclude='.gitignore' \
+            --exclude='.gitattributes' \
+            ./ package/rsvp/
+          cd package
+          # Keep asset name rsvp.zip to match existing install docs
+          zip -r "../rsvp.zip" rsvp \
+            -x "rsvp/**/.DS_Store" \
+            -x "rsvp/**/Thumbs.db"
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: rsvp.zip
+          generate_release_notes: true
+          fail_on_unmatched_files: true
