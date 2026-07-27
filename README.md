@@ -1,6 +1,6 @@
 _Note: Some features such as audible notifications when the timer reaches zero or chat reporting do not meet the HorizonXI addon standards and cannot be implemented with this addon._
 
-This is an approved Horizon addon (06/26/24 addonreq-0604).
+The fork and its additional features have been approved for use on HorizonXI.
 
 ## How to Install
 1. On the right side of the Github page (to the right of all the files) there is a section called "Releases".
