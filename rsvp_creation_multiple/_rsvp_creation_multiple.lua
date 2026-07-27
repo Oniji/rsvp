@@ -3,7 +3,7 @@ CreateMultiple = T{}
 CreateMultiple.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
-    Visible = {true},
+    Visible = {false},
 }
 
 CreateMultiple.Table_Flags = bit.bor(ImGuiSelectableFlags_None)
@@ -31,7 +31,7 @@ CreateMultiple.Display = function()
             CreateMultiple.Reset_Position = false
         end
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
-        if UI.Begin("RSVP Multi-Creation", RSVP.CreateMultiple.Visible, Window.Window_Flags) then
+        if UI.Begin("RSVP Multi-Creation", RSVP.CreateMultiple.Visible, CreateMultiple.Table_Flags) then
             RSVP.CreateMultiple.X_Pos, RSVP.CreateMultiple.Y_Pos = UI.GetWindowPos()
             CreateMultiple.Set_Window_Scaling()
             Inputs.Date_Field()

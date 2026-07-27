@@ -202,7 +202,7 @@ end
 -- Creates a multi-line text field for multi-input.
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Multiple_Field = function()
-    UI.InputTextMultiline("Create Multiple", Inputs.Buffers.Multiple, 4096, {Inputs.Widths.Multiple, UI.GetTextLineHeight() * 15 },  ImGuiInputTextFlags_AutoSelectAll)
+    UI.InputTextMultiline("##m", Inputs.Buffers.Multiple, 4096, {Inputs.Widths.Multiple, UI.GetTextLineHeight() * 15 },  ImGuiInputTextFlags_AutoSelectAll)
 end
 
 -- ------------------------------------------------------------------------------------------------------
@@ -418,6 +418,7 @@ end
 ---@return integer
 -- ------------------------------------------------------------------------------------------------------
 Inputs.Spawn_From_Clock_Gated = function(base_date, h, m, s, rel_sec, now_ts)
+    local SECS_PER_DAY = 86400
     now_ts = now_ts or os.time()
 
     local function ts_for_day_offset(offset_days)
@@ -428,30 +429,38 @@ Inputs.Spawn_From_Clock_Gated = function(base_date, h, m, s, rel_sec, now_ts)
 
     local ts0  = ts_for_day_offset(0)
 
-    -- If no relative phrase, do NOT auto-roll. Just return base.
+    -- If no relative phrase, return base timestamp
     if rel_sec == nil then
         return ts0
     end
 
-    -- Future phrase: allow rolling forward if base time would be "too early"
+    -- Future phrase: calculates future timestamp based on relative phrase
     if rel_sec > 0 then
-        -- choose whichever day (0 or +1) best matches rel_sec
-        local ts1 = ts_for_day_offset(1)
-
+        -- seconds from now to the "same time today" target
         local d0 = ts0 - now_ts
-        local d1 = ts1 - now_ts
 
-        -- If base day is already future and close enough, keep it.
-        -- Otherwise pick the closer one.
-        if d0 >= 0 then
-            if math.abs(d0 - rel_sec) <= math.abs(d1 - rel_sec) then return ts0 else return ts1 end
+        -- Find an offset near where rel_sec would land.
+        -- Use floor so k is the largest offset where d0 + k*day <= rel_sec (roughly).
+        local k = math.floor((rel_sec - d0) / SECS_PER_DAY)
+
+        -- We only want future days in this branch
+        if k < 0 then k = 0 end
+
+        local ts_k  = ts_for_day_offset(k)
+        local ts_k1 = ts_for_day_offset(k + 1)
+
+        local dk  = ts_k  - now_ts
+        local dk1 = ts_k1 - now_ts
+
+        -- pick whichever is closer to the requested relative seconds
+        if math.abs(dk - rel_sec) <= math.abs(dk1 - rel_sec) then
+            return ts_k
         else
-            -- base is in the past but phrase says future -> roll forward
-            return ts1
+            return ts_k1
         end
     end
 
-    -- Past phrase: do NOT roll forward. (Optionally roll backward to match)
+    -- Past phrase: calculates past timestamp based on relative phrase
     if rel_sec < 0 then
         local ts_1 = ts_for_day_offset(-1)
 
@@ -492,7 +501,9 @@ Inputs.Parse_Input = function(mode)
             local hnm_name, is_hnm, hnm_type = Utils.Canonicalize_HNM(name)
             if is_hnm then
                 local rel_sec = Utils.Get_Relative_Seconds(line)
-                --local spawn_ts = Inputs.Compute_Spawn_Time(line)
+                if not rel_sec then
+                    rel_sec = 0
+                end  
                 local spawn_ts = Inputs.Spawn_From_Clock_Gated(base_date, timestamp[1], timestamp[2], timestamp[3], rel_sec, now)
                 if spawn_ts then
                     local is_rel = Utils.Is_Relevant(now, spawn_ts, hnm_type)

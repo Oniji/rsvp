@@ -136,7 +136,12 @@ Utils.Get_Relative_Seconds = function(line)
     end
 
     -- a day ago
-    local days = line:match("a%s+day?%s+ago")
+    if line:match("a%s+day%s+ago") then
+        return -24 * 3600
+    end   
+
+    -- n days ago
+    local days = line:match("(%d+)%s+days?%s+ago")
     if days then
         return -tonumber(days) * 24 * 3600
     end   

@@ -3,7 +3,7 @@ Create = T{}
 Create.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
-    Visible = {true},
+    Visible = {false},
 }
 
 Create.Table_Flags = bit.bor(ImGuiSelectableFlags_None)
@@ -24,7 +24,7 @@ Create.Display = function()
             Create.Reset_Position = false
         end
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
-        if UI.Begin("RSVP Creation", RSVP.Create.Visible, Window.Window_Flags) then
+        if UI.Begin("RSVP Creation", RSVP.Create.Visible, Create.Table_Flags) then
             RSVP.Create.X_Pos, RSVP.Create.Y_Pos = UI.GetWindowPos()
             Create.Set_Window_Scaling()
             if UI.BeginTabBar("Reminder Types", Window.Tab_Flags) then
