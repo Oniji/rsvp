@@ -44,9 +44,10 @@ Utils.Strip_Trailing_Counter = function(s)
     return (s:gsub("%s*%(%d+%)s%*$", ""))
 end
 
--- Extract time
+-- Extract time (24-hour, or 12-hour with AM/PM)
 Utils.Extract_Time = function(s)
-    -- Time format H(H):MM:SS
+    -- H(H):MM:SS with optional AM/PM (e.g. "18:05:16" or "6:05:16 PM")
+    -- Lua patterns cannot make a capture group optional with ?, so match AM/PM separately.
     local h, m, sec = s:match("(%d%d?):(%d%d):(%d%d)")
     if not h or not m or not sec then
         return nil
@@ -58,8 +59,22 @@ Utils.Extract_Time = function(s)
     if m > 59 or sec > 59 then
         return nil
     end
-    return h, m, sec
 
+    local meridiem = s:match("%d%d?:%d%d:%d%d%s*([AaPp][Mm])")
+    if meridiem then
+        meridiem = string.upper(meridiem)
+        -- 12-hour clock: hours must be 1–12
+        if h < 1 or h > 12 then
+            return nil
+        end
+        if meridiem == "AM" then
+            if h == 12 then h = 0 end
+        else -- PM
+            if h ~= 12 then h = h + 12 end
+        end
+    end
+
+    return h, m, sec
 end
 
 -- Convert time to seconds
