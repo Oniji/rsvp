@@ -514,8 +514,9 @@ Inputs.Parse_Input = function(mode)
                     end
                 end
             else
+                -- Unknown name: still create a single normal timer using the parsed clock + relative phrase.
                 if mode == "creation" then
-                    local spawn_ts = Input.Compute_Spawn_Time(line) 
+                    local spawn_ts = Inputs.Spawn_From_Clock_Gated(base_date, timestamp[1], timestamp[2], timestamp[3], rel_sec, now)
                     if spawn_ts then
                         local date, time = Utils.Timestamp_To_DateTime(spawn_ts)
                         CreateMultiple.Schedule(CreateMultiple.Type.Normal, name, date, time, nil)
