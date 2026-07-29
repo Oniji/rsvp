@@ -1,6 +1,6 @@
 _Note: Some features such as audible notifications when the timer reaches zero or chat reporting do not meet the HorizonXI addon standards and cannot be implemented with this addon._
 
-This is an approved Horizon addon (06/26/24 addonreq-0604).
+The fork and its additional features have been approved for use on HorizonXI.
 
 ## How to Install
 1. On the right side of the Github page (to the right of all the files) there is a section called "Releases".
@@ -51,7 +51,8 @@ Relative timers are created {X} amount of minutes into the future from the curre
 Specific timers are created by entering a specific date and time to count down to. There can be useful for HNMs or other events. Names are required for these and the time and dates need to be in the formats HH:MM:SS (AM/PM) and MM/DD/YY , respectively. The AM/PM is optional if you want to use 24-hour time. A timer preview is provided so that you can see what the addon thinks you're entering. The Sim: row is a simulation of what the timer will look like once created. Some quick buttons are available for creating timer groups for HNMs. The "10M7" buttons is for your 1-hour 10-minute windows like Fafnir (7 total windows). The "1H25" is for your 24-hour 1-hour windows like Tiamat (25 total windows). If you need to make a grouped timer with custom windows you can do that as well by expanding the "Custom Windows" drop down.
 
 ### RSVP Multi-Creation
-The Multi-Creation window lets you paste several timer lines at once (for example from a Discord TOD bot) and create them in one click. Open it with the "++" button on the timer list, or with `/rsvp multi` (`cm` / `mm` also work).
+The Multi-Creation window lets you paste several timer lines at once and create them in one click. Open it with the "++" button on the timer list, or with `/rsvp multi` (`cm` / `mm` also work).<br><br>
+<img width="708" height="312" alt="image" src="https://github.com/user-attachments/assets/983ec623-a6d5-49ce-8204-8c98566309d2" />
 
 1. Set the **Date** (`MM/DD/YY`) that the pasted clock times belong to.
 2. Paste the bulk text into the multi-line field.
