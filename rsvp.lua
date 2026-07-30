@@ -11,7 +11,7 @@ modification, are permitted provided that the following conditions are met:
     * Neither the name of React nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 DISCLAIMED. IN NO EVENT SHALL --Metra-- BE LIABLE FOR ANY
@@ -23,36 +23,46 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
-addon.author = "Metra, Saraji"
-addon.name = "rsvp"
-addon.version = "27.07.26.00"
+addon.author  = 'Metra, Saraji'
+addon.name    = 'rsvp'
+addon.version = '2026-07-30'
 
-Settings = require("settings")
-UI = require("imgui")
-require("ashita._ashita")
-require("gui._window")
-require("config._config")
-require("clock._clock")
-require("rsvp_creation._rsvp_creation")
-require("rsvp_creation_multiple._rsvp_creation_multiple")
-require("rsvp_list._rsvp_list")
-require("timers._timers")
-require("file")
-require("inputs")
-require("initialization")
-require("utils")
+Settings = require('settings')
+UI       = require('imgui')
+
+require('ashita._ashita')
+require('version')
+require('gui._window')
+require('config._config')
+require('clock._clock')
+require('rsvp_creation._rsvp_creation')
+require('rsvp_creation_multiple._rsvp_creation_multiple')
+require('rsvp_list._rsvp_list')
+require('timers._timers')
+require('file')
+require('inputs')
+require('initialization')
+require('utils')
 
 _Globals = T{}
 _Globals.Initialized = false
 
 RSVP = T{}
 
+Window.SetDrawMode()
+
 -- ------------------------------------------------------------------------------------------------------
 -- Catch the screen rendering packet.
 -- ------------------------------------------------------------------------------------------------------
 ashita.events.register('d3d_present', 'present_cb', function ()
-    if not _Globals.Initialized then return nil end
-    if not Ashita.Player.Is_Logged_In() then return nil end
+    if not _Globals.Initialized then
+        return nil
+    end
+
+    if not Ashita.Player.IsLoggedIn() then
+        return nil
+    end
+
     Clock.Display()
     Create.Display()
     CreateMultiple.Display()
@@ -65,20 +75,37 @@ end)
 -- Influenced by HXUI: https://github.com/tirem/HXUI
 ------------------------------------------------------------------------------------------------------
 ashita.events.register('command', 'command_cb', function (e)
-    local command_args = e.command:lower():args()
+    local commandArgs = e.command:lower():args()
+
     ---@diagnostic disable-next-line: undefined-field
-    if table.contains({"/rsvp"}, command_args[1]) then
-        local arg = command_args[2]
+    if table.contains({'/rsvp'}, commandArgs[1]) then
+        local arg = commandArgs[2]
+
         if not arg then
-            Config.Toggle.Config_Window_Visibility()
-        elseif arg == "create" or arg == "make" or arg == "c" or arg == "m" then
-            Config.Toggle.Create_Window_Visibility()
-        elseif arg == "multi" or arg == "multiple" or arg == "cm" or arg == "mm" then
-            Config.Toggle.Create_Multiple_Window_Visibility()
-        elseif arg == "clock" or arg == "cl" then
-            Config.Toggle.Clock_Visibility()
-        elseif arg == "timers" or arg == "list" or arg == "t" or arg == "l" then
-            Config.Toggle.List_Window_Visibility()
+            Config.Toggle.ConfigWindowVisibility()
+
+        elseif arg == 'create' or arg == 'make' or arg == 'c' or arg == 'm' then
+            Config.Toggle.CreateWindowVisibility()
+
+        elseif arg == 'multi' or arg == 'multiple' or arg == 'cm' or arg == 'mm' then
+            Config.Toggle.CreateMultipleWindowVisibility()
+
+        elseif arg == 'clock' or arg == 'cl' then
+            Config.Toggle.ClockVisibility()
+
+        elseif arg == 'timers' or arg == 'list' or arg == 't' or arg == 'l' then
+            Config.Toggle.ListWindowVisibility()
+
+        elseif arg == 'rel' then
+            local name    = commandArgs[3] or 'Default Name'
+            local minutes = tonumber(commandArgs[4])
+
+            if not minutes then
+                Ashita.Chat.Echo('Invalid minute parameter.')
+                return nil
+            end
+
+            Timers.Start(name, minutes)
         end
     end
 end)
