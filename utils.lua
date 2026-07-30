@@ -16,10 +16,21 @@ local HNM_ALIASES = {
     ["nidhogg"]                  = { "Nidhogg",         CreateMultiple.Type.King },
     ["fafnir/nidhogg"]           = { "Fafnir/Nidhogg",   CreateMultiple.Type.King },
 
-    -- Other HNMs
+    -- Wyrms
     ["tiamat"]                   = { "Tiamat",          CreateMultiple.Type.Wyrm },
     ["vrtra"]                    = { "Vrtra",           CreateMultiple.Type.Wyrm },
     ["jormungand"]               = { "Jormungand",       CreateMultiple.Type.Wyrm },
+
+    -- TOAU HNMs
+    ["khimaira"]                 = { "Khimaira",       CreateMultiple.Type.Wyrm },
+    ["cerberus"]                 = { "Cerberus",       CreateMultiple.Type.Wyrm },
+    ["hydra"]                    = { "Hydra",          CreateMultiple.Type.Wyrm },
+
+    ["gulool ja ja"]             = { "Gulool Ja Ja",    CreateMultiple.Type.Normal },
+    ["medusa"]                   = { "Medusa",          CreateMultiple.Type.Normal },
+    ["gurfurlur"]                = { "Gurfurlur",       CreateMultiple.Type.Normal },
+
+    -- Other HNMs
     ["simurgh"]                  = { "Simurgh",         CreateMultiple.Type.King },
     ["king arthro"]              = { "King Arthro",     CreateMultiple.Type.King },
     ["king vinegarroon"]         = { "King Vinegarroon",CreateMultiple.Type.Normal },
