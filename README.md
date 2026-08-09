@@ -85,9 +85,9 @@ Two options in **RSVP Config → Settings** affect how bulk-created (and other) 
 24-hour:
 
 ```
-Behemoth :zap:(2): 3:16:37 in 3 hours
+Behemoth :zap: (2): 3:16:37 in 3 hours
 Adamantoise :turtle: (1): 18:05:16 in 3 hours
-Fafnir/Nidhogg 🚨🐲 (4): 8:40:33 in 17 hours
+Fafnir/Nidhogg :dragon: (4): 8:40:33 in 17 hours
 Bloodsucker :drop_of_blood:: 23:40:40 in 8 hours
 ```
 
