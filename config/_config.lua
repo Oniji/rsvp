@@ -133,6 +133,15 @@ local widgetAbbreviateNames = function()
 end
 
 -- ------------------------------------------------------------------------------------------------------
+-- Toggles HNM day (D#) display on the Timer List.
+-- ------------------------------------------------------------------------------------------------------
+local widgetIncludeHnmDay = function()
+    if UI.Checkbox('Include HNM Day', { RSVP.List.Include_HNM_Day }) then
+        RSVP.List.Include_HNM_Day = not RSVP.List.Include_HNM_Day
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Sets the hour filter value.
 -- ------------------------------------------------------------------------------------------------------
 local widgetSetHourFilter = function()
@@ -187,6 +196,7 @@ local settings = function()
         widgetDecoration()
         widgetCountdown()
         widgetAbbreviateNames()
+        widgetIncludeHnmDay()
 
         UI.Separator()
 

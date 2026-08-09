@@ -62,33 +62,34 @@ end
 ---@param date table
 ---@param time table
 ---@param customInfo? table
+---@param day? integer HNM day index from bulk paste (optional).
 -- ------------------------------------------------------------------------------------------------------
-CreateMultiple.Schedule = function(type, name, date, time, customInfo)
+CreateMultiple.Schedule = function(type, name, date, time, customInfo, day)
     local timestamp = Timers.MakeTimeTable(date, time)
 
     if type == CreateMultiple.Type.Normal then
         local futureMinutes = (timestamp - os.time()) / 60
-        Timers.Start(name, futureMinutes)
+        Timers.Start(name, futureMinutes, nil, day)
 
     elseif type == CreateMultiple.Type.King then
         local futureMinutes = (timestamp - os.time()) / 60
         for i = 0, 6, 1 do
             local timerName = name .. ' (' .. tostring(i + 1) .. '/7)'
-            Timers.Start(timerName, futureMinutes + (10 * i), name)
+            Timers.Start(timerName, futureMinutes + (10 * i), name, day)
         end
 
     elseif type == CreateMultiple.Type.Wyrm then
         local futureMinutes = (timestamp - os.time()) / 60
         for i = 0, 24, 1 do
             local timerName = name .. ' (' .. tostring(i + 1) .. '/25)'
-            Timers.Start(timerName, futureMinutes + (60 * i), name)
+            Timers.Start(timerName, futureMinutes + (60 * i), name, day)
         end
 
     elseif type == CreateMultiple.Type.Custom then
         local futureMinutes = (timestamp - os.time()) / 60
         for i = 0, customInfo.count, 1 do
             local timerName = name .. ' (' .. tostring(i + 1) .. '/' .. tostring(customInfo.count + 1) .. ')'
-            Timers.Start(timerName, futureMinutes + (customInfo.gap * i), name)
+            Timers.Start(timerName, futureMinutes + (customInfo.gap * i), name, day)
         end
     end
 end

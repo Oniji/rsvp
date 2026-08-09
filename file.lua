@@ -55,6 +55,7 @@ File.Save = function()
             local timerStart = timerData.Start
             local timerEnd   = timerData.End
             local timerGroup = timerData.Group
+            local timerDay   = timerData.Day
 
             if not timerGroup then
                 timerGroup = Timers.Groups.NO_GROUP
@@ -67,6 +68,10 @@ File.Save = function()
                 timerEnd,   File.Delimter,
                 timerGroup
             )
+
+            if timerDay ~= nil then
+                saveString = string.format("%s%s%s", saveString, File.Delimter, tostring(timerDay))
+            end
 
             file:write(string.format("%s\n", saveString))
         end
@@ -99,8 +104,9 @@ File.Load = function()
             local timerStart = tonumber(pieces[2]) or os.time()
             local timerEnd   = tonumber(pieces[3]) or os.time()
             local timerGroup = tostring(pieces[4]) or Timers.Groups.NO_GROUP
+            local timerDay   = pieces[5] and tonumber(pieces[5]) or nil
 
-            Timers.Create(timerName, timerStart, timerEnd, timerGroup)
+            Timers.Create(timerName, timerStart, timerEnd, timerGroup, timerDay)
         end
     end
 end

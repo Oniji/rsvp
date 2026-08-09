@@ -64,24 +64,34 @@ Each non-empty line is parsed independently. Lines without a valid time are igno
 Each timer line needs a **name** and a **time**. An optional **relative phrase** helps resolve day rollover when the clock time alone is ambiguous.
 
 ```
-<Name> ... <H:MM:SS or H:MM:SS AM/PM> [relative phrase]
+<Name> ... [(day)] ... <H:MM:SS or H:MM:SS AM/PM> [relative phrase]
 ```
 
-- **Name:** Leading letters/spaces (and `/` for combined names like `Fafnir/Nidhogg`). Extra text such as Discord emoji codes (`:turtle:`) or counters (`(1)`) can appear after the name and are ignored for matching.
+- **Name:** Leading letters/spaces (and `/` for combined names like `Fafnir/Nidhogg`). Extra text such as Discord emoji codes (`:turtle:`) can appear after the name and are ignored for matching.
+- **Day (optional):** A number in parentheses after the name/emoji (for example `(2)` or `(4)`). For HNMs that have HQ variants (Behemoth/KB, Ada/Aspid, Fafnir/Nidhogg lines), this is stored as the HNM day index. If those HNMs have no bracketed number, day **1** is assumed. It is not used for other names (and is distinct from window tags like `(1/7)` which the addon creates itself).
 - **Time:** `H:MM:SS` or `HH:MM:SS`. Optional `AM` / `PM` for 12-hour time. Without AM/PM, the time is treated as 24-hour.
-- **Relative phrase (optional):** Used with the date + clock time to pick the correct day.
+- **Relative phrase (optional):** Used with the date + clock time to pick the correct day of the calendar date.
   - Future: `in a day`, `in N days`, `in N hours`, `in N minutes`, `in N seconds`
   - Past: `a day ago`, `N days ago`, `N hours ago`, `N minutes ago`, `N seconds ago`
+
+#### Display options (Settings)
+Two options in **RSVP Config → Settings** affect how bulk-created (and other) timers appear in the list:
+
+1. **Abbreviate Names** (default off) — shortens known HNM names in the list (for example `Behemoth` → `Behe`, `Fafnir/Nidhogg` → `Faf/Nid`). Stored timer names are unchanged.
+2. **Include HNM Day** (default on) — for HQ-variant HNMs above, shows the stored day after the name (for example `Behe D2`, `Faf/Nid D4`). Can be used with or without Abbreviate Names. Window tags still append when present (for example `Faf D4 (1/7)`).
 
 #### Examples
 
 24-hour:
 
 ```
+Behemoth :zap:(2): 3:16:37 in 3 hours
 Adamantoise :turtle: (1): 18:05:16 in 3 hours
+Fafnir/Nidhogg 🚨🐲 (4): 8:40:33 in 17 hours
 Bloodsucker :drop_of_blood:: 23:40:40 in 8 hours
-King Vinegarroon :scorpion:: 1:37:47 in 10 hours
 ```
+
+With **Abbreviate Names** and **Include HNM Day** enabled, list labels look like `Behe D2`, `Ada D1`, `Faf/Nid D4`, and `BS` (Bloodsucker has no day tag).
 
 12-hour:
 
@@ -94,5 +104,5 @@ King Vinegarroon :scorpion:: 1:37:47 AM in 10 hours
 #### Known HNMs
 Recognized HNM names are canonicalized and scheduled with the matching window set when relevant (for example King windows for Fafnir/Nidhogg, Wyrm windows for Tiamat). Unknown names are created as normal single timers.
 
-Supported names include: Behemoth, King Behemoth, Adamantoise, Aspidochelone, Fafnir, Nidhogg, Tiamat, Vrtra, Jormungand, Simurgh, King Arthro, King Vinegarroon, Bloodsucker, and Shikigami Weapon (plus combined forms like `Fafnir/Nidhogg`).
+Supported names include: Behemoth, King Behemoth, Adamantoise, Aspidochelone, Fafnir, Nidhogg, Tiamat, Vrtra, Jormungand, Khimaira, Cerberus, Hydra, Gulool Ja Ja, Medusa, Gurfurlur, Simurgh, King Arthro, King Vinegarroon, Bloodsucker, and Shikigami Weapon (plus combined forms like `Fafnir/Nidhogg` and `Behemoth/KB`).
 

@@ -66,12 +66,62 @@ local HNM_ABBREVIATIONS = {
     ["shikigami"]        = "Shiki",
 }
 
+-- HNMs that track a day index from bulk paste (HQ variants).
+local HNM_DAY_NAMES = {
+    ["behemoth"]       = true,
+    ["kb"]             = true,
+    ["behemoth/kb"]    = true,
+    ["ada"]            = true,
+    ["aspid"]          = true,
+    ["ada/aspid"]      = true,
+    ["fafnir"]         = true,
+    ["nidhogg"]        = true,
+    ["fafnir/nidhogg"] = true,
+}
+
 Utils.Trim = function(s)
     return (s:gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
 -- ------------------------------------------------------------------------------------------------------
--- Returns a display name for the timer list, optionally abbreviated.
+-- True if this HNM supports day-index display (Behe/Ada/Faf lines).
+-- ------------------------------------------------------------------------------------------------------
+---@param name string
+---@return boolean
+-- ------------------------------------------------------------------------------------------------------
+Utils.Supports_HNM_Day = function(name)
+    if not name then
+        return false
+    end
+
+    local base = tostring(name):match('^(.-)%s*%(%d+%/%d+%)$') or tostring(name)
+    return HNM_DAY_NAMES[Utils.Normalize_Name(base)] == true
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Extracts HNM day index from a bulk line, e.g. "(2)" in "Behemoth :zap:(2): ...".
+-- Ignores window suffixes like "(1/7)".
+-- ------------------------------------------------------------------------------------------------------
+---@param line string
+---@return integer|nil
+-- ------------------------------------------------------------------------------------------------------
+Utils.Extract_HNM_Day = function(line)
+    if not line then
+        return nil
+    end
+
+    -- Strip window-style (n/m) so they cannot confuse day parsing.
+    local cleaned = line:gsub('%(%d+%/%d+%)', '')
+    local day = cleaned:match('%((%d+)%)')
+    if day then
+        return tonumber(day)
+    end
+
+    return nil
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Returns a display name for the timer list (abbreviation and/or HNM day).
 -- Keeps window suffixes like " (1/7)" intact.
 -- ------------------------------------------------------------------------------------------------------
 ---@param name string
@@ -82,22 +132,34 @@ Utils.Display_Name = function(name)
         return ''
     end
 
-    if not RSVP or not RSVP.List or not RSVP.List.Abbreviate_Names then
-        return tostring(name)
-    end
-
-    local base, suffix = tostring(name):match('^(.-)(%s*%(%d+%/%d+%))$')
+    local full = tostring(name)
+    local base, suffix = full:match('^(.-)(%s*%(%d+%/%d+%))$')
     if not base then
-        base = tostring(name)
+        base = full
         suffix = ''
     end
 
-    local abbrev = HNM_ABBREVIATIONS[Utils.Normalize_Name(base)]
-    if abbrev then
-        return abbrev .. suffix
+    local display = base
+    local list = RSVP and RSVP.List
+
+    if list and list.Abbreviate_Names then
+        local abbrev = HNM_ABBREVIATIONS[Utils.Normalize_Name(base)]
+        if abbrev then
+            display = abbrev
+        end
     end
 
-    return tostring(name)
+    if list and list.Include_HNM_Day and Utils.Supports_HNM_Day(base) then
+        local day = nil
+        if Timers and Timers.Timers and Timers.Timers[name] then
+            day = Timers.Timers[name].Day
+        end
+        if day ~= nil then
+            display = string.format('%s D%d', display, day)
+        end
+    end
+
+    return display .. suffix
 end
 
 -- Remove Emoji (discord style)

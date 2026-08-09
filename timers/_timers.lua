@@ -79,8 +79,9 @@ end
 ---@param name    string name of the timer to check.
 ---@param minutes number number of minutes from now for the timer.
 ---@param group?  string name of the group for a set of related timers.
+---@param day?    integer HNM day index from bulk paste (e.g. 2 for D2).
 -- --------------------------------------------------------------------------
-Timers.Start = function(name, minutes, group)
+Timers.Start = function(name, minutes, group, day)
     if not name then
         name = 'Default'
     end
@@ -92,6 +93,7 @@ Timers.Start = function(name, minutes, group)
     Timers.Timers[name].Start = os.time()
     Timers.Timers[name].End   = os.time() + (minutes * 60)
     Timers.Timers[name].Group = nil
+    Timers.Timers[name].Day   = day
 
     if group then
         Timers.Timers[name].Group = group
@@ -137,8 +139,9 @@ end
 ---@param startTime number
 ---@param endTime   number
 ---@param group?    string true if this timer belongs to a group like a king timer.
+---@param day?      integer HNM day index (optional, for legacy saves without it).
 -- --------------------------------------------------------------------------
-Timers.Create = function(name, startTime, endTime, group)
+Timers.Create = function(name, startTime, endTime, group, day)
     if not name or not startTime or not endTime then
         return nil
     end
@@ -150,6 +153,7 @@ Timers.Create = function(name, startTime, endTime, group)
     Timers.Timers[name].Start = startTime
     Timers.Timers[name].End   = endTime
     Timers.Timers[name].Group = Timers.Groups.NO_GROUP
+    Timers.Timers[name].Day   = day
 
     if group then
         Timers.Timers[name].Group = group

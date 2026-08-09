@@ -558,7 +558,11 @@ Inputs.ParseInput = function(mode)
                     local isRel = Utils.Is_Relevant(now, spawnTs, hnmType)
                     if isRel and mode == 'creation' then
                         local date, time = Utils.Timestamp_To_DateTime(spawnTs)
-                        CreateMultiple.Schedule(hnmType, hnmName, date, time, nil)
+                        local day = nil
+                        if Utils.Supports_HNM_Day(hnmName) then
+                            day = Utils.Extract_HNM_Day(line) or 1
+                        end
+                        CreateMultiple.Schedule(hnmType, hnmName, date, time, nil, day)
                     end
                 end
             else
@@ -567,7 +571,7 @@ Inputs.ParseInput = function(mode)
                     local spawnTs = Inputs.SpawnFromClockGated(baseDate, timestamp[1], timestamp[2], timestamp[3], relSec, now)
                     if spawnTs then
                         local date, time = Utils.Timestamp_To_DateTime(spawnTs)
-                        CreateMultiple.Schedule(CreateMultiple.Type.Normal, name, date, time, nil)
+                        CreateMultiple.Schedule(CreateMultiple.Type.Normal, name, date, time, nil, nil)
                     end
                 end
             end

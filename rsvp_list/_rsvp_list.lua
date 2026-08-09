@@ -11,6 +11,7 @@ List.Defaults = T{
     Hour_Filter       = 2,
     Show_Countdown    = true,
     Abbreviate_Names  = false,
+    Include_HNM_Day   = true,
     Auto_Clear        = false,
     Auto_Clear_Delay  = 30,
 }
