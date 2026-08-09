@@ -27,20 +27,16 @@ local helpText = function()
 
             UI.TableNextRow()
             UI.TableNextColumn() UI.Text('GitHub')
-            UI.TableNextColumn() UI.Text('https://github.com/RaraProjects/rsvp')
+            UI.TableNextColumn() UI.Text('https://github.com/Oniji/rsvp')
             Window.TableRowColor(1)
-
-            UI.TableNextColumn() UI.Text('Discord')
-            UI.TableNextColumn() UI.Text('https://discord.gg/u5yqUbR6R7')
-            Window.TableRowColor(0)
 
             UI.TableNextColumn() UI.Text('Version')
             UI.TableNextColumn() UI.Text(tostring(addon.version))
-            Window.TableRowColor(1)
+            Window.TableRowColor(0)
 
             UI.TableNextColumn() UI.Text('Command')
             UI.TableNextColumn() UI.Text('/rsvp')
-            Window.TableRowColor(0)
+            Window.TableRowColor(1)
 
             UI.EndTable()
         end
@@ -128,6 +124,15 @@ local widgetCountdown = function()
 end
 
 -- ------------------------------------------------------------------------------------------------------
+-- Toggles abbreviated HNM names on the Timer List.
+-- ------------------------------------------------------------------------------------------------------
+local widgetAbbreviateNames = function()
+    if UI.Checkbox('Abbreviate Names', { RSVP.List.Abbreviate_Names }) then
+        RSVP.List.Abbreviate_Names = not RSVP.List.Abbreviate_Names
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Sets the hour filter value.
 -- ------------------------------------------------------------------------------------------------------
 local widgetSetHourFilter = function()
@@ -181,6 +186,7 @@ local settings = function()
     if UI.BeginTabItem('Settings') then
         widgetDecoration()
         widgetCountdown()
+        widgetAbbreviateNames()
 
         UI.Separator()
 
@@ -231,7 +237,8 @@ Config.Display = function()
             if UI.BeginTabBar('Settings Tabs', ImGuiTabBarFlags_None) then
                 helpText()
                 settings()
-                updates()
+                -- Update tab hidden on this fork (upstream version check is not applicable).
+                -- updates()
                 UI.EndTabBar()
             end
 

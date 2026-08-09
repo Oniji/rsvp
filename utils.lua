@@ -39,8 +39,65 @@ local HNM_ALIASES = {
 }
 
 
+-- Display abbreviations for known HNM timer names (case-insensitive keys).
+local HNM_ABBREVIATIONS = {
+    ["behemoth"]         = "Behe",
+    ["kb"]               = "KB",
+    ["behemoth/kb"]      = "Behe/KB",
+    ["ada"]              = "Ada",
+    ["aspid"]            = "Aspid",
+    ["ada/aspid"]        = "Ada/Aspid",
+    ["fafnir"]           = "Faf",
+    ["nidhogg"]          = "Nid",
+    ["fafnir/nidhogg"]   = "Faf/Nid",
+    ["tiamat"]           = "Tia",
+    ["vrtra"]            = "Vrt",
+    ["jormungand"]       = "Jorm",
+    ["khimaira"]         = "Khim",
+    ["cerberus"]         = "Cerb",
+    ["hydra"]            = "Hydra",
+    ["gulool ja ja"]     = "GJJ",
+    ["medusa"]           = "Med",
+    ["gurfurlur"]        = "Gurf",
+    ["simurgh"]          = "Sim",
+    ["king arthro"]      = "KA",
+    ["king vinegarroon"] = "KV",
+    ["bloodsucker"]      = "BS",
+    ["shikigami"]        = "Shiki",
+}
+
 Utils.Trim = function(s)
     return (s:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+-- ------------------------------------------------------------------------------------------------------
+-- Returns a display name for the timer list, optionally abbreviated.
+-- Keeps window suffixes like " (1/7)" intact.
+-- ------------------------------------------------------------------------------------------------------
+---@param name string
+---@return string
+-- ------------------------------------------------------------------------------------------------------
+Utils.Display_Name = function(name)
+    if not name then
+        return ''
+    end
+
+    if not RSVP or not RSVP.List or not RSVP.List.Abbreviate_Names then
+        return tostring(name)
+    end
+
+    local base, suffix = tostring(name):match('^(.-)(%s*%(%d+%/%d+%))$')
+    if not base then
+        base = tostring(name)
+        suffix = ''
+    end
+
+    local abbrev = HNM_ABBREVIATIONS[Utils.Normalize_Name(base)]
+    if abbrev then
+        return abbrev .. suffix
+    end
+
+    return tostring(name)
 end
 
 -- Remove Emoji (discord style)

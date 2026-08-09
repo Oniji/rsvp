@@ -4,14 +4,15 @@ List.Defaults = T{
     X_Pos  = 100,
     Y_Pos  = 100,
     Scale  = 1.0,
-    Visible          = { true },
-    Group_Mode       = true,
-    Decoration       = false,
-    Apply_Filter     = true,
-    Hour_Filter      = 2,
-    Show_Countdown   = true,
-    Auto_Clear       = false,
-    Auto_Clear_Delay = 30,
+    Visible           = { true },
+    Group_Mode        = true,
+    Decoration        = false,
+    Apply_Filter      = true,
+    Hour_Filter       = 2,
+    Show_Countdown    = true,
+    Abbreviate_Names  = false,
+    Auto_Clear        = false,
+    Auto_Clear_Delay  = 30,
 }
 
 List.Window_Flags = bit.bor(
@@ -85,7 +86,7 @@ end
 local tableRows = function(name, timer, color, showGroups, group, collapsed)
     UI.TableNextRow()
     UI.TableNextColumn() List.Buttons.DeleteTimer(name)
-    UI.TableNextColumn() UI.Text(tostring(name))
+    UI.TableNextColumn() UI.Text(Utils.Display_Name(name))
     UI.TableNextColumn() UI.TextColored(color, timer)
 
     if showGroups and group and RSVP.List.Group_Mode then
