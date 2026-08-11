@@ -9,6 +9,9 @@ ashita.events.register('load', 'load_cb', function()
         CreateMultiple = Settings.load(CreateMultiple.Defaults, CreateMultiple.ALIAS),
         Config = Settings.load(Config.Defaults, Config.ALIAS)
     }
+    -- Recover from invisible timer list (closed via X / bad p_open after ImGui collapse issues).
+    List.NormalizeVisible(true)
+    List.Reset_Position = true
     File.Load()
     _Globals.Initialized = true
 end)
@@ -42,6 +45,7 @@ end)
 Settings.register(List.ALIAS, 'settings_update', function(settings)
     if settings ~= nil then
         RSVP.List = settings
+        List.NormalizeVisible(true)
         List.Reset_Position = true
         Settings.save(List.ALIAS)
     end

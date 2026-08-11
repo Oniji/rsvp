@@ -34,6 +34,7 @@ CreateMultiple.Display = function()
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
         Window.SetScaling()
 
+        -- Always End after Begin (even when collapsed); skipping End causes "Missing End()".
         if UI.Begin('RSVP Multi-Creation', RSVP.CreateMultiple.Visible, Window.Window_Flags) then
             RSVP.CreateMultiple.X_Pos, RSVP.CreateMultiple.Y_Pos = UI.GetWindowPos()
             Window.SetLegacyScaling()

@@ -143,6 +143,7 @@ Create.Display = function()
         UI.PushStyleColor(ImGuiCol_WindowBg, Window.Colors.DEFAULT)
         Window.SetScaling()
 
+        -- Always End after Begin (even when collapsed); skipping End causes "Missing End()".
         if UI.Begin('RSVP Creation', RSVP.Create.Visible, Window.Window_Flags) then
             RSVP.Create.X_Pos, RSVP.Create.Y_Pos = UI.GetWindowPos()
             Window.SetLegacyScaling()

@@ -111,6 +111,9 @@ end
 local widgetDecoration = function()
     if UI.Checkbox('List Window Header', { RSVP.List.Decoration }) then
         RSVP.List.Decoration = not RSVP.List.Decoration
+        -- Header only applies when the list is drawn; re-show if it was closed with X.
+        List.NormalizeVisible(true)
+        List.Reset_Position = true
     end
 end
 
@@ -240,6 +243,7 @@ Config.Display = function()
 
         Window.SetScaling()
 
+        -- Always End after Begin (even when collapsed); skipping End causes "Missing End()".
         if UI.Begin('RSVP Config', Config.Visible, Window.Window_Flags) then
             RSVP.Config.X_Pos, RSVP.Config.Y_Pos = UI.GetWindowPos()
             Window.SetLegacyScaling()

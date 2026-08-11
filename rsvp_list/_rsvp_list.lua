@@ -37,6 +37,23 @@ List.Reset_Position = true
 require('rsvp_list.buttons')
 
 -- ------------------------------------------------------------------------------------------------------
+-- Settings / ImGui p_open can leave Visibility as a bare bool or {false} after collapses/closes.
+-- Keep a real table so Begin() and the header toggle behave; open on load when empty/broken.
+-- ------------------------------------------------------------------------------------------------------
+---@param forceOpen? boolean when true, always show the list (e.g. after load or header toggle)
+-- ------------------------------------------------------------------------------------------------------
+List.NormalizeVisible = function(forceOpen)
+    if type(RSVP.List.Visible) ~= 'table' then
+        RSVP.List.Visible = { true }
+        return
+    end
+
+    if forceOpen or RSVP.List.Visible[1] == nil then
+        RSVP.List.Visible[1] = true
+    end
+end
+
+-- ------------------------------------------------------------------------------------------------------
 -- Returns how many columns should be shown in the active timer list.
 -- ------------------------------------------------------------------------------------------------------
 ---@return integer
@@ -128,98 +145,108 @@ end
 -- Show the list of reminders.
 -- ------------------------------------------------------------------------------------------------------
 List.Display = function()
-    if RSVP.List.Visible[1] then
-        UI.PushStyleColor(ImGuiCol_TableRowBg,    Window.Colors.DEFAULT)
-        UI.PushStyleColor(ImGuiCol_TableRowBgAlt, Window.Colors.DEFAULT)
+    if not RSVP or not RSVP.List then
+        return
+    end
 
-        local windowFlags = List.Window_Flags
+    List.NormalizeVisible(false)
 
-        if not RSVP.List.Decoration then
-            windowFlags = bit.bor(windowFlags, ImGuiWindowFlags_NoDecoration)
-        end
+    if not RSVP.List.Visible[1] then
+        return
+    end
 
-        if List.Reset_Position then
-            UI.SetNextWindowPos({ RSVP.List.X_Pos, RSVP.List.Y_Pos }, ImGuiCond_Always)
-            List.Reset_Position = false
-        end
+    UI.PushStyleColor(ImGuiCol_TableRowBg,    Window.Colors.DEFAULT)
+    UI.PushStyleColor(ImGuiCol_TableRowBgAlt, Window.Colors.DEFAULT)
 
-        Window.SetScaling()
+    local windowFlags = List.Window_Flags
 
-        if UI.Begin('RSVP Timer List', RSVP.List.Visible, windowFlags) then
-            RSVP.List.X_Pos, RSVP.List.Y_Pos = UI.GetWindowPos()
-            Window.SetLegacyScaling()
+    if not RSVP.List.Decoration then
+        -- No title bar: no collapse control and collapse would leave a zero-size window.
+        windowFlags = bit.bor(windowFlags, ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_NoCollapse)
+    end
 
-            local filteredTimers = 0
+    if List.Reset_Position then
+        UI.SetNextWindowPos({ RSVP.List.X_Pos, RSVP.List.Y_Pos }, ImGuiCond_Always)
+        List.Reset_Position = false
+    end
 
-            List.Buttons.ModeButtons()
-            if Timers.Count > 0 then
-                local columns, showGroups = columnsCount()
-                local shownTimers = 0
+    Window.SetScaling()
 
-                if UI.BeginTable('List', columns, List.Table_Flags) then
-                    tableHeaders(showGroups)
+    -- Always End after Begin (even when collapsed); skipping End causes "Missing End()".
+    if UI.Begin('RSVP Timer List', RSVP.List.Visible, windowFlags) then
+        RSVP.List.X_Pos, RSVP.List.Y_Pos = UI.GetWindowPos()
+        Window.SetLegacyScaling()
 
-                    local blocked   = { }
-                    local collapsed = { }
-                    local now       = os.time()
+        local filteredTimers = 0
 
-                    for _, timerData in ipairs(Timers.Sorted) do
-                        local name  = timerData[1]
-                        local group = Timers.Groups.Get(name)
+        List.Buttons.ModeButtons()
+        if Timers.Count > 0 then
+            local columns, showGroups = columnsCount()
+            local shownTimers = 0
 
-                        -- Filter and auto-clear setup.
-                        local endTime  = timerData[2]
-                        local duration = endTime - now
+            if UI.BeginTable('List', columns, List.Table_Flags) then
+                tableHeaders(showGroups)
 
-                        if RSVP.List.Auto_Clear and duration < (RSVP.List.Auto_Clear_Delay * -1) then
-                            Timers.End(name)
+                local blocked   = { }
+                local collapsed = { }
+                local now       = os.time()
+
+                for _, timerData in ipairs(Timers.Sorted) do
+                    local name  = timerData[1]
+                    local group = Timers.Groups.Get(name)
+
+                    -- Filter and auto-clear setup.
+                    local endTime  = timerData[2]
+                    local duration = endTime - now
+
+                    if RSVP.List.Auto_Clear and duration < (RSVP.List.Auto_Clear_Delay * -1) then
+                        Timers.End(name)
+                    end
+
+                    if not RSVP.List.Apply_Filter then
+                        duration = 0
+                    end -- Show everything.
+
+                    -- Only show the earliest timer from a timer group (unless it's expanded) within filter time.
+                    if duration < (RSVP.List.Hour_Filter * 3600) then
+                        if not group or not blocked[group] or Timers.Groups.IsExpanded(group) then
+                            shownTimers = shownTimers + 1
+
+                            local timer, color = timerColor(name)
+
+                            tableRows(name, timer, color, showGroups, group, collapsed)
                         end
-
-                        if not RSVP.List.Apply_Filter then
-                            duration = 0
-                        end -- Show everything.
-
-                        -- Only show the earliest timer from a timer group (unless it's expanded) within filter time.
-                        if duration < (RSVP.List.Hour_Filter * 3600) then
-                            if not group or not blocked[group] or Timers.Groups.IsExpanded(group) then
-                                shownTimers = shownTimers + 1
-
-                                local timer, color = timerColor(name)
-
-                                tableRows(name, timer, color, showGroups, group, collapsed)
-                            end
-                        else
-                            if not group or (group and not blocked[group]) then
-                                filteredTimers = filteredTimers + 1
-                            end
-                        end
-
-                        -- Block subsequent timers from the same group.
-                        if group then
-                            blocked[group] = true
-                            collapsed[group] = true
+                    else
+                        if not group or (group and not blocked[group]) then
+                            filteredTimers = filteredTimers + 1
                         end
                     end
 
-                    UI.EndTable()
-
-                    if shownTimers == 0 then
-                        UI.Text('No timers to show.')
+                    -- Block subsequent timers from the same group.
+                    if group then
+                        blocked[group] = true
+                        collapsed[group] = true
                     end
                 end
 
-                List.Filtered = filteredTimers
-            else
-                UI.Text('No timers set.')
+                UI.EndTable()
+
+                if shownTimers == 0 then
+                    UI.Text('No timers to show.')
+                end
             end
 
-            Window.SetLegacyScaling(Config.GetScale())
+            List.Filtered = filteredTimers
+        else
+            UI.Text('No timers set.')
         end
-        UI.End()
 
-        Window.SetScaling(Config.GetScale())
-        UI.PopStyleColor(2)
+        Window.SetLegacyScaling(Config.GetScale())
     end
+    UI.End()
+
+    Window.SetScaling(Config.GetScale())
+    UI.PopStyleColor(2)
 end
 
 -- ------------------------------------------------------------------------------------------------------
