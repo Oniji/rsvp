@@ -51,8 +51,8 @@ Clock.Display = function()
             end
 
             Window.SetLegacyScaling(Config.GetScale())
-            UI.End()
         end
+        UI.End()
 
         Window.SetScaling(Config.GetScale())
         UI.PopStyleColor(1)
